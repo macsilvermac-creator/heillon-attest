@@ -1,34 +1,48 @@
-# @heillon/attest
+# @heillon/attest  
+**Marco Zero**
 
-> **Marco Zero**
->
-> This is where truth begins.
+> **Este é o ponto onde a verdade começa.**
 
-`attest()` is the minimal sovereign primitive for generating
-cryptographically verifiable facts.
+`attest()` é o primitivo soberano mínimo para gerar fatos criptograficamente verificáveis.
 
-This SDK does not decide.
-It does not reason.
-It does not optimize.
+Este SDK **não decide**.  
+**Não raciocina**.  
+**Não otimiza**.
 
-It **attests**.
+Ele **atesta**.
 
 ---
 
-## What is `attest()`?
+## O que é `attest()`?
 
-`attest()` converts an action, its context, and its authority
-into a **sovereign fact**.
+`attest()` converte uma ação, seu contexto e uma autoridade declarada em um **fato soberano**.
 
-A fact that:
-- cannot be silently overwritten
-- cannot exist without authority
-- cannot exist without time
-- cannot exist without justification
+Um fato que:
+
+- não pode ser sobrescrito silenciosamente  
+- não pode existir sem autoridade  
+- não pode existir sem tempo  
+- não pode existir sem justificativa  
+
+Esse fato é criptograficamente verificável e projetado para ser **auditável por terceiros**.
 
 ---
 
-## Canonical Usage
+## Nota Conceitual (Importante)
+
+No HEILLON, **um fato não emerge de uma ação isolada**.
+
+Um fato só existe quando uma **intenção explícita** é declarada **sob autoridade**, e é **ancorada no tempo e na continuidade causal**.
+
+Campos como `action` ou `actor`, quando presentes, são **metadados descritivos**.  
+Eles **não** são fontes de autoridade, verdade ou legitimidade.
+
+A autoridade deve ser sempre explicitamente declarada.  
+Tempo e causalidade são intrínsecos ao processo de atestação.
+
+---
+
+## Uso Canônico
 
 ```ts
 import { attest } from '@heillon/attest';
@@ -45,4 +59,3 @@ const fact = await attest({
 });
 
 console.log(fact);
-
