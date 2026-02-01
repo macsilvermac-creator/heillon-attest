@@ -1,6 +1,5 @@
 // C:\heillon-attest\test\attest.test.ts
 
-import crypto from 'crypto';
 import { attest } from '../src/attest';
 import { SovereignFact } from '../src/types';
 

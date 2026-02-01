@@ -1,16 +1,5 @@
 // C:\heillon-attest\src\types.ts
 
-export interface Proof {
-  id: string;
-  hash: string;
-  previous_hash: string | null;
-  timestamp: number;
-  authority: string;
-  justification: string;
-  payload: unknown;
-  signature: string;
-}
-
 export interface SovereignFact {
   id: string;
   hash: string;
@@ -21,7 +10,7 @@ export interface SovereignFact {
   payload: unknown;
   signature: string;
 
-  // Métodos de verificação
+  // Métodos
   verify(): boolean;
-  toProof(): Proof;
+  toProof(): { hash: string; signature: string };
 }
