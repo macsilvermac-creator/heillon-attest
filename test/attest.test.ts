@@ -1,4 +1,4 @@
-import { attest } from '../src/attest.js';
+import { attest } from '../src/attest.ts';
 
 
 async function runTest() {
