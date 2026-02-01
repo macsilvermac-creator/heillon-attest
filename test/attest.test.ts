@@ -1,4 +1,5 @@
-import { attest } from '../src/attest';
+import { attest } from '../src/attest.js';
+
 
 async function runTest() {
   console.log('Iniciando teste mínimo de SovereignFact...');
