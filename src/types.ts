@@ -1,4 +1,5 @@
-import { Proof } from './types'; // placeholder se precisar importar outras interfaces
+// C:\heillon-attest\src\types.ts
+
 export interface Proof {
   id: string;
   hash: string;
@@ -10,7 +11,17 @@ export interface Proof {
   signature: string;
 }
 
-export interface SovereignFact extends Proof {
+export interface SovereignFact {
+  id: string;
+  hash: string;
+  previous_hash: string | null;
+  timestamp: number;
+  authority: string;
+  justification: string;
+  payload: unknown;
+  signature: string;
+
+  // Métodos de verificação
   verify(): boolean;
   toProof(): Proof;
 }
