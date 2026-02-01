@@ -13,12 +13,9 @@ export interface SovereignFact {
   justification: string;
   payload: unknown;
   signature: string;
-
-  // Métodos
-  verify(): boolean;
-  toProof(): Proof;
-  
-  // Campos adicionais necessários para Marco Zero
   action: string;
   actor: string;
+
+  verify(): boolean;
+  toProof(): Proof;
 }

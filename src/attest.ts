@@ -32,10 +32,10 @@ export async function attest(params: {
     authority,
     justification,
     payload,
-    _originalPayload: payload, // snapshot imutável para verify()
+    _originalPayload: JSON.parse(JSON.stringify(payload)), // cópia profunda e imutável
     signature,
-    action, // necessário para verify()
-    actor,  // necessário para verify()
+    action,
+    actor,
 
     // ✅ Verificação: compara com snapshot original
     verify() {
@@ -46,7 +46,7 @@ export async function attest(params: {
           actor: this.actor,
           authority: this.authority,
           justification: this.justification,
-          payload: this._originalPayload, // usa snapshot imutável
+          payload: this._originalPayload, // snapshot imutável
           timestamp: this.timestamp,
           previous_hash: this.previous_hash
         }))
@@ -59,6 +59,9 @@ export async function attest(params: {
       return { hash: this.hash, signature: this.signature };
     }
   };
+
+  // Opcional: garantir que o snapshot não seja alterado acidentalmente
+  Object.freeze(fact._originalPayload);
 
   return fact;
 }
