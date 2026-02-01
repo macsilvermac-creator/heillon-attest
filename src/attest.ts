@@ -32,12 +32,12 @@ export async function attest(params: {
     authority,
     justification,
     payload,
-    _originalPayload: JSON.parse(JSON.stringify(payload)), // cópia profunda e imutável
+    _originalPayload: JSON.parse(JSON.stringify(payload)), // snapshot imutável
     signature,
     action,
     actor,
 
-    // ✅ Verificação: compara com snapshot original
+    // ✅ Verificação: detecta qualquer alteração externa
     verify() {
       const recomputedHash = crypto.createHash('sha256')
         .update(JSON.stringify({
@@ -46,7 +46,7 @@ export async function attest(params: {
           actor: this.actor,
           authority: this.authority,
           justification: this.justification,
-          payload: this._originalPayload, // snapshot imutável
+          payload: this.payload, // <- usa estado atual, detecta mudanças
           timestamp: this.timestamp,
           previous_hash: this.previous_hash
         }))
@@ -60,7 +60,6 @@ export async function attest(params: {
     }
   };
 
-  // Opcional: garantir que o snapshot não seja alterado acidentalmente
   Object.freeze(fact._originalPayload);
 
   return fact;
