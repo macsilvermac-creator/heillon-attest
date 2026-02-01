@@ -1,68 +1,55 @@
-// ==============================
-// HEILLON — Marco Zero
-// attest(): Sovereign Fact Primitive
-// ==============================
+import crypto from 'crypto';
+import { SovereignFact, Proof } from './types';
 
-export type AttestationInput = {
-  action: string
-  actor: string
-  authority: string
-  justification: string
-  payload: Record<string, unknown>
-}
+// Marco Zero: Nenhum hash anterior ainda
+let lastHash: string | null = null;
 
-export type SovereignFact = {
-  id: string
-  action: string
-  actor: string
-  authority: string
-  justification: string
-  payload: Record<string, unknown>
-  issuedAt: string
-  hash: string
-}
+export async function attest({
+  action,
+  actor,
+  authority,
+  justification,
+  payload
+}: {
+  action: string;
+  actor: string;
+  authority: string;
+  justification: string;
+  payload: unknown;
+}): Promise<SovereignFact> {
 
-// --- Internal deterministic hash (placeholder, Marco Zero)
-function hashFact(input: Omit<SovereignFact, 'hash'>): string {
-  const serialized = JSON.stringify(input)
-  let hash = 0
-  for (let i = 0; i < serialized.length; i++) {
-    hash = (hash << 5) - hash + serialized.charCodeAt(i)
-    hash |= 0
-  }
-  return `HZ-${Math.abs(hash)}`
-}
+  const timestamp = Date.now();
+  const id = crypto.randomUUID();
 
-// --- THE FUNCTION
-export async function attest(
-  input: AttestationInput
-): Promise<SovereignFact> {
-  // Invariant 1: Authority is mandatory
-  if (!input.authority) {
-    throw new Error('HEILLON: authority is required')
-  }
+  // Gerar hash do fato
+  const hashInput = JSON.stringify({ id, action, actor, authority, justification, payload, timestamp, previous_hash: lastHash });
+  const hash = crypto.createHash('sha256').update(hashInput).digest('hex');
 
-  // Invariant 2: Justification is mandatory
-  if (!input.justification) {
-    throw new Error('HEILLON: justification is required')
-  }
+  const previous_hash = lastHash;
 
-  const issuedAt = new Date().toISOString()
+  // Assinatura placeholder (substituir por chave real depois)
+  const signature = crypto.createSign('SHA256').update(hash).end().sign('dummy-private-key', 'hex');
 
-  const factBase = {
-    id: crypto.randomUUID(),
-    action: input.action,
-    actor: input.actor,
-    authority: input.authority,
-    justification: input.justification,
-    payload: input.payload,
-    issuedAt
-  }
+  const fact: SovereignFact = {
+    id,
+    hash,
+    previous_hash,
+    timestamp,
+    authority,
+    justification,
+    payload,
+    signature,
+    verify() {
+      const recomputedHash = crypto.createHash('sha256').update(JSON.stringify({ id, action, actor, authority, justification, payload, timestamp, previous_hash })).digest('hex');
+      return recomputedHash === this.hash;
+    },
+    toProof() {
+      return { ...this };
+    }
+  };
 
-  const hash = hashFact(factBase)
+  // Atualiza hash anterior para próximo fato
+  lastHash = hash;
 
-  return {
-    ...factBase,
-    hash
-  }
+  return fact;
 }
