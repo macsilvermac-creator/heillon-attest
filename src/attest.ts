@@ -1,6 +1,7 @@
-// src/attest.ts
+// ==============================
 // HEILLON — Marco Zero
-// This is where truth begins.
+// attest(): Sovereign Fact Primitive
+// ==============================
 
 export type AttestationInput = {
   action: string
@@ -12,38 +13,44 @@ export type AttestationInput = {
 
 export type SovereignFact = {
   id: string
-  hash: string
-  issuedAt: string
   action: string
   actor: string
   authority: string
   justification: string
   payload: Record<string, unknown>
+  issuedAt: string
+  hash: string
 }
 
-/**
- * attest()
- *
- * The minimal sovereign primitive.
- * Converts an intention into an immutable, verifiable fact.
- *
- * This function does NOT decide.
- * It does NOT optimize.
- * It does NOT reason.
- *
- * It attests.
- */
-export function attest(input: AttestationInput): SovereignFact {
-  // Basic invariant checks (Marco Zero)
-  if (!input.action) throw new Error('Action is required')
-  if (!input.actor) throw new Error('Actor is required')
-  if (!input.authority) throw new Error('Authority is required')
-  if (!input.justification) throw new Error('Justification is required')
+// --- Internal deterministic hash (placeholder, Marco Zero)
+function hashFact(input: Omit<SovereignFact, 'hash'>): string {
+  const serialized = JSON.stringify(input)
+  let hash = 0
+  for (let i = 0; i < serialized.length; i++) {
+    hash = (hash << 5) - hash + serialized.charCodeAt(i)
+    hash |= 0
+  }
+  return `HZ-${Math.abs(hash)}`
+}
+
+// --- THE FUNCTION
+export async function attest(
+  input: AttestationInput
+): Promise<SovereignFact> {
+  // Invariant 1: Authority is mandatory
+  if (!input.authority) {
+    throw new Error('HEILLON: authority is required')
+  }
+
+  // Invariant 2: Justification is mandatory
+  if (!input.justification) {
+    throw new Error('HEILLON: justification is required')
+  }
 
   const issuedAt = new Date().toISOString()
 
-  // Deterministic materialization of the fact
-  const materialized = {
+  const factBase = {
+    id: crypto.randomUUID(),
     action: input.action,
     actor: input.actor,
     authority: input.authority,
@@ -52,17 +59,10 @@ export function attest(input: AttestationInput): SovereignFact {
     issuedAt
   }
 
-  // Deterministic hash (Marco Zero – no crypto lib yet)
-  const hash = JSON.stringify(materialized)
+  const hash = hashFact(factBase)
 
   return {
-    id: `fact_${Date.now()}`,
-    hash,
-    issuedAt,
-    action: input.action,
-    actor: input.actor,
-    authority: input.authority,
-    justification: input.justification,
-    payload: input.payload
+    ...factBase,
+    hash
   }
 }
