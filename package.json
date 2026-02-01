@@ -1,0 +1,12 @@
+{
+  "name": "@heillon/attest",
+  "version": "0.0.1",
+  "description": "Sovereign attestation primitive. This is where truth begins.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc"
+  },
+  "license": "UNLICENSED"
+}
